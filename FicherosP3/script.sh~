@@ -1,0 +1,89 @@
+#!/bin/bash
+make clean
+make
+clear
+echo "------Simulacion practica 3------"
+
+	if test -d $resultados; then 
+		rm -r $resultados
+	fi
+
+mkdir resultados
+
+echo "Nombre del fichero:"
+read fichero
+
+	while ! [ -e "examples/$fichero" ]; do
+		echo "No existe el fichero"
+		read fichero
+	done
+
+echo "Número de CPUs"
+read nCpus
+
+read -p "¿Quieres empezar la simulacion? (RR)"
+
+mkdir resultados/RR
+cd resultados/RR
+../../schedsim -i ../../examples/$fichero -n $nCpus -p	
+
+cd ../../../gantt-gplot
+
+cnt=0
+while [ $cnt -lt $nCpus ]; do
+    ./generate_gantt_chart ../schedsim/resultados/RR/CPU_$cnt.log
+   let cnt++
+ done
+cd ../schedsim
+read -p "¿Pasar a la siguiente simulacion? (SJF)" 
+
+###############################################################################################
+
+mkdir resultados/SJF
+cd resultados/SJF
+../../schedsim -i ../../examples/$fichero -n $nCpus -p
+
+cd ../../../gantt-gplot
+
+cnt=0
+while [ $cnt -lt $nCpus ]; do
+    ./generate_gantt_chart ../schedsim/resultados/SJF/CPU_$cnt.log
+   let cnt++
+ done
+cd ../schedsim
+read -p "¿Pasar a la siguiente simulacion? (FCFS)"
+
+################################################################################################
+
+mkdir resultados/FCFS
+cd resultados/FCFS
+../../schedsim -i ../../examples/$fichero -n $nCpus -p
+
+cd ../../../gantt-gplot
+
+cnt=0
+while [ $cnt -lt $nCpus ]; do
+    ./generate_gantt_chart ../schedsim/resultados/FCFS/CPU_$cnt.log
+   let cnt++
+ done
+cd ../schedsim
+read -p "¿Pasar a la siguiente simulacion? (PRIO)"
+
+################################################################################################
+
+mkdir resultados/PRIO
+cd resultados/PRIO
+../../schedsim -i ../../examples/$fichero -n $nCpus -p
+
+cd ../../../gantt-gplot
+
+cnt=0
+while [ $cnt -lt $nCpus ]; do
+    ./generate_gantt_chart ../schedsim/resultados/PRIO/CPU_$cnt.log -s
+   let cnt++
+ done
+cd ../schedsim
+read -p "Simulacion terminada"
+clear
+
+
